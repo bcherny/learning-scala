@@ -6,7 +6,7 @@ def zipWith [A,B](as: List[A], bs: List[A])(f: (A,A)=>B): List[B] = {
     case (_) => acc
   }
 
-  loop(as, bs, Nil:List[B])
+  loop(as, bs, Nil)
 
 }
 
