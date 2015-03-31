@@ -1,13 +1,7 @@
 
-def zipWith [A,B](as: List[A], bs: List[A])(f: (A,A)=>B): List[B] = {
-
-  def loop (as: List[A], bs: List[A], acc: List[B]): List[B] = (as,bs) match {
-    case (a::as, b::bs) => loop(as, bs, acc :+ f(a, b))
-    case (_) => acc
-  }
-
-  loop(as, bs, Nil)
-
+def zipWith [A,B](as: List[A], bs: List[A])(f: (A,A)=>B): List[B] = (as,bs) match {
+  case (a::at, b::bt) => f(a, b) :: zipWith(at, bt)(f)
+  case (_) => Nil
 }
 
 assert(zipWith(List(1,2,3), List(4,5,6))(_+_), List(5,7,9))
