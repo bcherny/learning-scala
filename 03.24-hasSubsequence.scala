@@ -1,12 +1,40 @@
 
 
-def hasSubsequence [A] (sup: List[A], sub: List[A]): Any = {
+// def hasSubsequence [A] (sup: List[A], sub: List[A]): Any = {
 
-  sup
-    .zipWithIndex
-    .filter(_._1 == sub.head)
-    .map(_._2)
+//   // get index of first match, if there is one
+//   def getFirstIndex (sup: List[A], sub: List[A]): Any = {
+//     sup
+//       .zipWithIndex
+//       .filter(_._1 == sub.head)
+//       .map(_._2) match {
+//         case h::Nil => h
+//         case _ => Nil
+//       }
+//   }
 
+//   val index = getFirstIndex(sup, sub)
+
+//   if index
+//     sup.zipWithIndex.map (s,i) => {
+//       if i >
+//     }
+
+// }
+
+// from https://github.com/fpinscala/fpinscala/blob/master/answerkey/datastructures/24.answer.scala
+@annotation.tailrec
+def startsWith[A](l: List[A], prefix: List[A]): Boolean = (l,prefix) match {
+  case (_,Nil) => true
+  case (h::t,h2::t2) if h == h2 => startsWith(t, t2)
+  case _ => false
+}
+
+@annotation.tailrec
+def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = sup match {
+  case Nil => sub == Nil
+  case _ if startsWith(sup, sub) => true
+  case _::t => hasSubsequence(t, sub)
 }
 
 
