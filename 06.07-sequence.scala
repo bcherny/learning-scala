@@ -13,16 +13,9 @@ case class SimpleRNG(seed: Long) extends RNG {
 
 type Rand[+A] = RNG => (A, RNG)
 
-//def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = rng => fs match {
-//  case f::ff => {
-//    val (a, rng2) = f(rng)
-//    (a::ff.map(_(rng)), rng2)
-//  }
-//}
-
 def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = rng => {
   val (a, rng2) = fs.head(rng)
-  (a::fs.tail.map(_(rng)), rng2)
+  (a::fs.tail.map(_(rng)._1), rng2)
 }
 
 val a: Rand[Int] = rng => (10, rng)
@@ -31,7 +24,7 @@ val c: Rand[Int] = rng => (30, rng)
 val rng = SimpleRNG(42)
 val (res, rng2) = sequence(List(a, b, c))(rng)
 
-assert(res, 20)
+assert(res, List(10, 20, 30))
 
 def assert(a: Any, b: Any) {
   if (a == b)
