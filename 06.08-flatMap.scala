@@ -24,7 +24,7 @@ def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
 
 // flatMap
 
-def flapMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
   rng => {
     val (a, rng2) = f(rng)
     val (b, rng3) = g(a)(rng2)
@@ -34,7 +34,7 @@ def flapMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
 def f: Rand[Int] = rng => (10, rng)
 def g: Int => Rand[String] = (a: Int) => rng => (a.toString, rng)
 val rng = SimpleRNG(42)
-val (n0, rng0) = flapMap(f)(g)(rng)
+val (n0, rng0) = flatMap(f)(g)(rng)
 
 assert(n0, "10")
 
@@ -46,7 +46,15 @@ def nonNegativeInt(rng: RNG): (Int, RNG) = {
 }
 
 def nonNegativeLessThan(n: Int): Rand[Int] =
-  flatMap(nonNegativeInt)
+  flatMap(nonNegativeInt)(i => {
+    val mod = i % n
+    if (i + (n - 1) - mod >= 0) rng => (mod, rng) else nonNegativeLessThan(i)
+  })
+
+val rng1 = SimpleRNG(42)
+val (a, _) = nonNegativeLessThan(10)(rng1)
+assert(a < 10, true)
+assert(a > 0, true)
 
 def assert(a: Any, b: Any) {
   if (a == b)
