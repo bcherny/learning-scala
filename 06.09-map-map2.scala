@@ -32,23 +32,23 @@ val (n0, rng0) = flatMap(f)(g)(rng)
 
 assert(n0, "10")
 
-// nonNegativeLessThan
+// map
 
-def nonNegativeInt(rng: RNG): (Int, RNG) = {
-  val (n, r) = rng.nextInt
-  (if (n < 0) -(n + 1) else n, r)
-}
+def map[A, B](f: Rand[A])(g: A => B): Rand[B] =
+  rng => {
+    val gg: A => Rand[B] = a => rng => (g(a), rng)
+    flatMap(f)(gg)(rng)
+  }
 
-def nonNegativeLessThan(n: Int): Rand[Int] =
-  flatMap(nonNegativeInt)(i => {
-    val mod = i % n
-    if (i + (n - 1) - mod >= 0) rng => (mod, rng) else nonNegativeLessThan(i)
-  })
+val (a, _) = map(f)(a => "foo")(rng)
+assert(a, "foo")
 
-val rng1 = SimpleRNG(42)
-val (a, _) = nonNegativeLessThan(10)(rng1)
-assert(a < 10, true)
-assert(a > 0, true)
+// map2
+// TODO
+
+//def map2[A, B, C](f: Rand[A], g: Rand[B])(h: (A, B) => C): Rand[C] =
+//val (b, _) = map2(f, f)(_ + _)(rng)
+//assert(b, 20)
 
 def assert(a: Any, b: Any) {
   if (a == b)
