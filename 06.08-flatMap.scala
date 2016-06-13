@@ -22,6 +22,8 @@ def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
     (f(a), rng2)
   }
 
+// flatMap
+
 def flapMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
   rng => {
     val (a, rng2) = f(rng)
@@ -35,6 +37,16 @@ val rng = SimpleRNG(42)
 val (n0, rng0) = flapMap(f)(g)(rng)
 
 assert(n0, "10")
+
+// nonNegativeLessThan
+
+def nonNegativeInt(rng: RNG): (Int, RNG) = {
+  val (n, r) = rng.nextInt
+  (if (n < 0) -(n + 1) else n, r)
+}
+
+def nonNegativeLessThan(n: Int): Rand[Int] =
+  flatMap(nonNegativeInt)
 
 def assert(a: Any, b: Any) {
   if (a == b)
